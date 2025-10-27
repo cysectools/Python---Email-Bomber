@@ -1,6 +1,7 @@
 #// Don't forget to hit SUBSCRIBE, COMMENT, LIKE, SHARE! and LEARN... :)
 # But srsly, hit that sub button so you don't miss out on more content! 
-
+# Google service requires application password!
+# Will Update Code to format strings properly. Later. 
 
 '''imports'''
 import smtplib
@@ -72,7 +73,7 @@ class Email_Bomber:
     def email(self):
         try:
             print(bcolors.RED + '\n+[+[+[ Setting up email ]+]+]+')
-            self.server = str(input(bcolors.GREEN + 'Enter email server | or select premade options - 1:Gmail 2:Yahoo 3:Outlook <: '))
+            self.server = str(input(bcolors.GREEN + 'Enter email server | or select premade options - 1:Gmail 2:Yahoo 3:Outlook <: ')) # Google Requires You to Use a 16-digit(char) "Application" Password For This To Run Properly. 
             premade = ['1', '2', '3']
             default_port = True
             if self.server not in premade:
@@ -90,7 +91,7 @@ class Email_Bomber:
                 self.server = 'smtp-mail.outlook.com'
 
             self.fromAddr = str(input(bcolors.GREEN + 'Enter from address <: '))
-            self.fromPwd = str(input(bcolors.GREEN + 'Enter from password <: '))
+            self.fromPwd = str(input(bcolors.GREEN + 'Enter from password <: ')) # Link to Issue: https://github.com/ncorbuk/Python---Email-Bomber/issues/19
             self.subject = str(input(bcolors.GREEN + 'Enter subject <: '))
             self.message = str(input(bcolors.GREEN + 'Enter message <: '))
 
